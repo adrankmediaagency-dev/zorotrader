@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,311 +9,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
-        }
-
-        .stock-bg {
-            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 50%, #0d1426 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stock-bg::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: -50%;
-            left: -50%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6, 182, 212, 0.03) 2px, rgba(6, 182, 212, 0.03) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(6, 182, 212, 0.03) 2px, rgba(6, 182, 212, 0.03) 4px);
-            animation: gridMove 40s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        .chart-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.08;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        .stock-bg { background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 50%, #0d1426 100%); position: relative; overflow: hidden; }
+        .stock-bg::before { content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(6, 182, 212, 0.03) 2px, rgba(6, 182, 212, 0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(6, 182, 212, 0.03) 2px, rgba(6, 182, 212, 0.03) 4px);
+            animation: gridMove 40s linear infinite; pointer-events: none; }
+        @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        .chart-overlay { position: absolute; width: 100%; height: 100%; opacity: 0.08;
             background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='chart' x='0' y='0' width='200' height='150' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0,100 L50,60 L100,80 L150,30 L200,50' stroke='%2306b6d4' stroke-width='2' fill='none'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23chart)'/%3E%3C/svg%3E");
-            pointer-events: none;
-        }
-
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .orb-1 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%);
-            top: 10%;
-            left: 15%;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, rgba(34, 211, 238, 0.3) 0%, transparent 70%);
-            bottom: 15%;
-            right: 20%;
-            animation-delay: 2s;
-        }
-
-        .orb-3 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -30px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        .ticker-tape {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(6, 182, 212, 0.1);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(6, 182, 212, 0.2);
-            padding: 12px 0;
-            overflow: hidden;
-        }
-
-        .ticker-content {
-            display: flex;
-            animation: tickerScroll 30s linear infinite;
-            white-space: nowrap;
-        }
-
-        @keyframes tickerScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .ticker-item {
-            padding: 0 40px;
-            font-size: 14px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .ticker-item.up {
-            color: #10b981;
-        }
-
-        .ticker-item.down {
-            color: #ef4444;
-        }
-
-        .card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 24px;
-            box-shadow: 
-                0 0 60px rgba(6, 182, 212, 0.15),
-                0 20px 40px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            animation: cardEntry 0.8s ease-out;
-        }
-
-        @keyframes cardEntry {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .profile-section {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(34, 211, 238, 0.1) 100%);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 16px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.6), transparent);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            animation: badgePulse 2s ease-in-out infinite;
-        }
-
-        .badge-premium {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: #78350f;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-        }
-
-        .badge-live {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-        }
-
-        @keyframes badgePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            color: white;
-            font-weight: 700;
-            font-size: 18px;
-            padding: 18px 32px;
-            border-radius: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 0 30px rgba(6, 182, 212, 0.4),
-                0 10px 25px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 0 40px rgba(6, 182, 212, 0.6),
-                0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-
-        .feature-card {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .feature-card:hover {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%);
-            border-color: rgba(6, 182, 212, 0.4);
-            transform: translateX(8px);
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
-        }
-
-        .icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-        }
-
-        .title-gradient {
-            font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            font-size: 30px;
-            background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 50%, #06b6d4 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 3s ease infinite;
-            letter-spacing: -0.02em;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .disclaimer {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            text-align: center;
-        }
-
-        .disclaimer a {
-            color: rgba(6, 182, 212, 0.6);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .disclaimer a:hover {
-            color: rgba(6, 182, 212, 0.9);
-        }
-
-        @media (max-width: 640px) {
-            .title-gradient {
-                font-size: 40px;
-            }
-            
-            .cta-button {
-                font-size: 16px;
-                padding: 16px 28px;
-            }
-        }
+            pointer-events: none; }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; animation: float 8s ease-in-out infinite; }
+        .orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%); top: 10%; left: 15%; animation-delay: 0s; }
+        .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(34, 211, 238, 0.3) 0%, transparent 70%); bottom: 15%; right: 20%; animation-delay: 2s; }
+        .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%); top: 50%; left: 50%; animation-delay: 4s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
+        .ticker-tape { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(6, 182, 212, 0.1); backdrop-filter: blur(10px); border-top: 1px solid rgba(6, 182, 212, 0.2); padding: 12px 0; overflow: hidden; }
+        .ticker-content { display: flex; animation: tickerScroll 30s linear infinite; white-space: nowrap; }
+        @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .ticker-item { padding: 0 40px; font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.7); }
+        .ticker-item.up { color: #10b981; }
+        .ticker-item.down { color: #ef4444; }
+        .card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 24px;
+            box-shadow: 0 0 60px rgba(6, 182, 212, 0.15), 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1); animation: cardEntry 0.8s ease-out; }
+        @keyframes cardEntry { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .profile-section { background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(34, 211, 238, 0.1) 100%); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
+        .profile-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.6), transparent); }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; animation: badgePulse 2s ease-in-out infinite; }
+        .badge-premium { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #78350f; box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+        .badge-live { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        @keyframes badgePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .cta-button { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; font-weight: 700; font-size: 18px; padding: 18px 32px; border-radius: 16px; border: none; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4), 0 10px 25px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden; }
+        .cta-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: left 0.5s ease; }
+        .cta-button:hover::before { left: 100%; }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(6, 182, 212, 0.6), 0 15px 35px rgba(0, 0, 0, 0.4); }
+        /* Locked state (grey) */
+        .cta-button.locked { background: linear-gradient(135deg, #64748b 0%, #475569 100%); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); cursor: not-allowed; }
+        .cta-button.locked:hover { transform: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); }
+        .cta-button.locked:hover::before { left: -100%; }
+        .feature-card { background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; transition: all 0.3s ease; cursor: pointer; }
+        .feature-card:hover { background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%); border-color: rgba(6, 182, 212, 0.4); transform: translateX(8px); box-shadow: 0 0 25px rgba(6, 182, 212, 0.2); }
+        .icon-wrapper { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
+        .title-gradient { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 30px; background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 50%, #06b6d4 100%); background-size: 200% 200%;
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShift 3s ease infinite; letter-spacing: -0.02em; }
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .disclaimer { font-size: 11px; color: rgba(255, 255, 255, 0.4); text-align: center; }
+        .disclaimer a { color: rgba(6, 182, 212, 0.6); text-decoration: none; transition: color 0.2s; }
+        .disclaimer a:hover { color: rgba(6, 182, 212, 0.9); }
+        @media (max-width: 640px) { .title-gradient { font-size: 40px; } .cta-button { font-size: 16px; padding: 16px 28px; } }
     </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -326,11 +69,11 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1168717955618024');
+fbq('init', '1615607186551488');
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1168717955618024&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=1615607186551488&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 </head>
@@ -340,7 +83,7 @@ src="https://www.facebook.com/tr?id=1168717955618024&ev=PageView&noscript=1"
         <div class="glow-orb orb-1"></div>
         <div class="glow-orb orb-2"></div>
         <div class="glow-orb orb-3"></div>
-        
+
         <!-- Chart overlay -->
         <div class="chart-overlay"></div>
 
@@ -360,7 +103,7 @@ src="https://www.facebook.com/tr?id=1168717955618024&ev=PageView&noscript=1"
                         </div>
                         <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 rounded-full border-4 border-slate-800"></div>
                     </div>
-                    
+
                     <div class="flex-1">
                         <div class="flex flex-wrap gap-2 mb-2">
                             <span class="badge badge-premium">
@@ -380,13 +123,13 @@ src="https://www.facebook.com/tr?id=1168717955618024&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <!-- CTA Button -->
-            <a href="https://telegram.me/+7WAOvUWsa1AxMjZl" target="_blank" class="block mb-6">
-                <button class="cta-button w-full flex items-center justify-center gap-3">
+            <!-- CTA Button (no href until verification passes) -->
+            <a id="tgLink" target="_blank" rel="noopener" class="block mb-6">
+                <button id="tgBtn" type="button" class="cta-button locked w-full flex items-center justify-center gap-3">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.14.12.098.153.231.169.324.016.093.036.305.02.469z"/>
                     </svg>
-                    JOIN TELEGRAM NOW
+                    <span id="tgLabel">PLEASE WAIT...</span>
                 </button>
             </a>
 
@@ -424,5 +167,76 @@ src="https://www.facebook.com/tr?id=1168717955618024&ev=PageView&noscript=1"
         </div>
         </div>
     </div>
+
+<script>
+(function () {
+    var link  = document.getElementById('tgLink');
+    var btn   = document.getElementById('tgBtn');
+    var label = document.getElementById('tgLabel');
+    var MIN_MS = 3000, MOVES_NEEDED = 5;
+    var startTime = Date.now(), moves = 0;
+    var timeOk = false, interacted = false, unlocked = false;
+    var ua = navigator.userAgent || '';
+
+    // 1. Bot / headless detection
+    var BOT_UA = /HeadlessChrome|PhantomJS|Headless|bot|crawl|spider|slurp|curl|wget|python|java\/|httpclient|selenium|puppeteer|playwright|webdriver|lighthouse|phantom|nightmare|electron/i;
+    var isBot = false;
+    try {
+        isBot = !!navigator.webdriver || BOT_UA.test(ua) || window.callPhantom || window._phantom ||
+                window.__nightmare || !!document.documentElement.getAttribute('webdriver') ||
+                (navigator.languages && navigator.languages.length === 0);
+    } catch (e) { isBot = true; }
+
+    // Link is assembled only after verification (never present in the HTML)
+    function tgUrl() { return ['https://telegram.me/', '+7WAOvUWsa1AxMjZl'].join(''); }
+
+    function setLabel(t) { label.textContent = t; }
+
+    function unlock() {
+        if (unlocked || isBot) return;
+        unlocked = true;
+        link.setAttribute('href', tgUrl());
+        btn.classList.remove('locked');
+        setLabel('JOIN TELEGRAM NOW');
+    }
+
+    function check() {
+        if (isBot || unlocked) return;
+        if (timeOk && interacted) { unlock(); return; }
+        if (timeOk && !interacted) setLabel('SCROLL OR TAP TO CONTINUE');
+    }
+
+    function markInteraction() { interacted = true; check(); }
+
+    // 2. Real-interaction listeners
+    ['touchstart', 'scroll', 'wheel', 'keydown'].forEach(function (ev) {
+        window.addEventListener(ev, markInteraction, { passive: true, once: true });
+    });
+    window.addEventListener('mousemove', function () {
+        if (interacted) return;
+        if (++moves > MOVES_NEEDED) markInteraction();
+    }, { passive: true });
+
+    // 3. Minimum time on page
+    setTimeout(function () { timeOk = true; check(); }, MIN_MS);
+
+    // 4. Click handling
+    link.addEventListener('click', function (e) {
+        // Locked, bot, or scripted click: do nothing
+        if (!unlocked || isBot || !e.isTrusted || (Date.now() - startTime) < MIN_MS) {
+            e.preventDefault();
+            return;
+        }
+        // Lead event: once per session, verified clicks only
+        var key = 'lead_fired';
+        var already = false;
+        try { already = sessionStorage.getItem(key) === '1'; } catch (err) {}
+        if (!already) {
+            try { if (typeof fbq === 'function') fbq('track', 'Lead'); } catch (err) {}
+            try { sessionStorage.setItem(key, '1'); } catch (err) {}
+        }
+    });
+})();
+</script>
 </body>
 </html>
